@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-pull-model
+  namespace: homie-prod
+spec:
+  template:
+    spec:
+      nodeSelector:
+        workload: ollama
+      restartPolicy: OnFailure
+      containers:
+        - name: pull
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Ollama to be ready..."
+              until curl -sf http://ollama:11434/api/tags; do sleep 5; done
+              echo "Pulling mistral:7b..."
+              curl -X POST http://ollama:11434/api/pull \
+                -d '{"name":"mistral:7b"}' \
+                --no-buffer
+              echo "Done."

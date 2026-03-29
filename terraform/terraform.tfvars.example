@@ -1,0 +1,24 @@
+# Copy to terraform.tfvars and fill in — never commit terraform.tfvars to Git
+# cp terraform.tfvars.example terraform.tfvars
+
+# OCI credentials — from OCI Console → Identity → Users → API Keys
+oci_tenancy_ocid     = "ocid1.tenancy.oc1..xxxx"
+oci_user_ocid        = "ocid1.user.oc1..xxxx"
+oci_fingerprint      = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+oci_private_key_path = "~/.oci/oci_api_key.pem"
+oci_region           = "uk-london-1"
+oci_compartment_id   = "ocid1.compartment.oc1..xxxx"  # or same as tenancy_ocid for root
+oci_namespace        = "xxxxxxxxxxxx"  # OCI Console → Object Storage → Namespace
+
+# OCI S3-compat keys for Terraform state
+# OCI Console → Identity → Users → Customer Secret Keys → Generate
+oci_access_key = "xxxx"
+oci_secret_key = "xxxx"
+
+# SSH — your local public key
+ssh_public_key = "ssh-ed25519 AAAA... you@machine"
+
+# App
+domain            = "homie.example.com"
+certmanager_email = "you@example.com"
+github_repo       = "https://github.com/kiukairor/homie.git"

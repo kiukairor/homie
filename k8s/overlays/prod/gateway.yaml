@@ -1,0 +1,42 @@
+# GatewayClass — tells the cluster which controller implements Gateway API
+# Traefik v3 registers itself as "traefik" controller on startup
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: traefik
+spec:
+  controllerName: traefik.io/gateway-controller
+
+---
+# Gateway — the actual listener (ports 80 + 443 with TLS)
+# One Gateway can serve multiple HTTPRoutes across namespaces
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: homie-gateway
+  namespace: homie-prod
+  annotations:
+    # cert-manager watches this annotation and provisions the certificate
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: web
+      protocol: HTTP
+      port: 80
+      # Redirect all HTTP → HTTPS handled in HTTPRoute below
+      allowedRoutes:
+        namespaces:
+          from: Same
+
+    - name: websecure
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: homie-tls       # Secret created by cert-manager
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          from: Same

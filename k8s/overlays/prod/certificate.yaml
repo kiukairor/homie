@@ -1,0 +1,15 @@
+# cert-manager Certificate — requests a Let's Encrypt cert and stores it
+# as a Secret named homie-tls, referenced by the Gateway listener above.
+# cert-manager auto-renews ~30 days before expiry.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: homie-tls
+  namespace: homie-prod
+spec:
+  secretName: homie-tls          # must match certificateRefs.name in gateway.yaml
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - YOUR_DOMAIN                 # replace with your domain
