@@ -27,7 +27,7 @@ spec:
                   name: homie-secrets
                   key: postgres-password
             - name: DATABASE_URL
-              value: postgresql+asyncpg://homie:$(POSTGRES_PASSWORD)@postgres:5432/homie
+              value: postgresql+asyncpg://homie:$(POSTGRES_PASSWORD)@postgres:5432/homie?ssl=false
             - name: REDIS_URL
               value: redis://redis:6379
             - name: OLLAMA_BASE_URL

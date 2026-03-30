@@ -61,6 +61,10 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/do
 kubectl wait --for=condition=Available deployment/cert-manager \
   -n cert-manager --timeout=120s
 
+# Enable Gateway API solver (needed for cert-manager v1.15+)
+kubectl patch deployment cert-manager -n cert-manager --type=json \
+  -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
+
 echo "==> Installing ArgoCD"
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
 kubectl apply -n argocd \
