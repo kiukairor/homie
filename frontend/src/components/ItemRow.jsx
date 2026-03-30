@@ -1,41 +1,43 @@
-export default function ItemRow({ item, onToggle, onDelete }) {
+// frontend/src/components/ItemRow.jsx
+import { Trash2 } from 'lucide-react'
+import { Badge } from './ui/badge'
+import { cn } from '../lib/utils'
+
+export function ItemRow({ item, onToggle, onDelete, showCategory }) {
   return (
-    <li style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      padding: "10px 0",
-      borderBottom: "1px solid #eee",
-      opacity: item.checked ? 0.5 : 1,
-    }}>
+    <div className="flex items-center gap-3 px-4 py-3">
       <input
         type="checkbox"
         checked={item.checked}
-        onChange={() => onToggle(item)}
-        style={{ width: 18, height: 18, cursor: "pointer" }}
+        onChange={() => onToggle(item.id, item.checked)}
+        className="h-5 w-5 rounded border-stone-300 accent-coral shrink-0 cursor-pointer"
+        aria-label={`Mark ${item.name} as ${item.checked ? 'unchecked' : 'checked'}`}
       />
-      <span style={{ flex: 1, textDecoration: item.checked ? "line-through" : "none" }}>
-        <strong>{item.name}</strong>
-        {" "}
-        <span style={{ color: "#555", fontSize: 14 }}>
-          {item.quantity}{item.unit ? ` ${item.unit}` : ""}
+      <div className="flex-1 min-w-0">
+        <span
+          className={cn(
+            'font-medium text-stone-900 block truncate transition-colors duration-200',
+            item.checked && 'line-through text-stone-400'
+          )}
+        >
+          {item.name}
         </span>
-      </span>
-      {item.category && (
-        <span style={{
-          fontSize: 11, padding: "2px 8px", borderRadius: 12,
-          background: "#e8f0fe", color: "#1a73e8"
-        }}>
-          {item.category}
-        </span>
+        {(item.quantity || item.unit) && (
+          <span className="text-sm text-stone-400">
+            {[item.quantity, item.unit].filter(Boolean).join('\u00a0')}
+          </span>
+        )}
+      </div>
+      {showCategory && item.category && item.category !== 'other' && (
+        <Badge className="shrink-0 capitalize">{item.category}</Badge>
       )}
       <button
         onClick={() => onDelete(item.id)}
-        style={{ background: "none", border: "none", color: "#d93025", cursor: "pointer", fontSize: 18 }}
-        aria-label="Delete"
+        className="text-stone-300 hover:text-red-400 transition-colors shrink-0 p-1 -mr-1"
+        aria-label={`Delete ${item.name}`}
       >
-        ×
+        <Trash2 className="w-4 h-4" />
       </button>
-    </li>
-  );
+    </div>
+  )
 }
