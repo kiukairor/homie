@@ -27,7 +27,7 @@ spec:
     - name: homie-gateway
       sectionName: websecure
   hostnames:
-    - YOUR_DOMAIN    # replace with your domain e.g. homie.example.com
+    - kiukairor.com
   rules:
     # API — backend
     - matches:
