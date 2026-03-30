@@ -5,7 +5,7 @@ import { cn } from '../lib/utils'
 
 export function ItemRow({ item, onToggle, onDelete, showCategory }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className={cn('flex items-center gap-3 px-4 py-3', item.checked && 'opacity-60 transition-opacity duration-200')}>
       <input
         type="checkbox"
         checked={item.checked}

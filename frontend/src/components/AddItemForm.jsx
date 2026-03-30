@@ -30,7 +30,7 @@ export function AddItemForm({ onAdd }) {
 
   return (
     <div className="fixed bottom-16 inset-x-0 z-10 px-3 pb-2 max-w-lg mx-auto left-0 right-0">
-      <Card className="shadow-lg border-stone-200">
+      <Card className="shadow-lg border-stone-200 rounded-b-none">
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             <Input
