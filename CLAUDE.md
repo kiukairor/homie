@@ -120,7 +120,7 @@ homie/
         └── plans/              # Implementation plans
 ```
 
-> **Phase 1 (backend + frontend) is fully implemented and deployed.**
+> **Phase 1 (backend + frontend) is fully implemented and deployed. App is live at https://homie.kiukairor.com**
 > Backend: FastAPI CRUD API, SQLAlchemy async, Alembic migrations, 10 tests all passing.
 > Frontend: React 18 PWA (Vite), Nginx, Dockerfile.
 > CI: GitHub Actions builds linux/arm64 images and pushes to ghcr.io on every push to main.
@@ -128,13 +128,14 @@ homie/
 > See `docs/superpowers/specs/2026-03-29-phase1-design.md` and
 > `docs/superpowers/plans/2026-03-29-phase1-shopping-list.md`.
 >
-> **Known deployment issues (as of 2026-03-30):**
-> - TLS cert pending: `kiukairor.com` is behind Cloudflare proxy; Cloudflare redirects the
->   Let's Encrypt HTTP-01 ACME challenge to HTTPS before it reaches the cluster.
->   Fix: switch to DNS-01 challenge via Cloudflare API token, or temporarily grey-cloud
->   the DNS record to let HTTP-01 through.
-> - Backend fix shipped (commit 981adab): added `?ssl=false` to DATABASE_URL so asyncpg
->   doesn't attempt an SSL handshake with the unencrypted Postgres pod.
+> **Fixes shipped (2026-03-30):**
+> - Cross-node networking: kube-router inserted REJECT before Flannel in iptables FORWARD chain.
+>   Fixed by inserting ACCEPT rules for 10.42.0.0/16 and 10.43.0.0/16 at position 1 on both nodes.
+>   Saved with netfilter-persistent. (pods on homie-app ↔ pods on homie-ai now communicate)
+> - DATABASE_URL ssl param: asyncpg requires `?ssl=disable` (not `ssl=false` or `sslmode=disable`).
+> - Domain: app is served at `homie.kiukairor.com`, not root `kiukairor.com`.
+>   Certificate dnsNames and HTTPRoute hostnames updated accordingly.
+> - TLS cert issued via Let's Encrypt HTTP-01 (grey-cloud DNS in Cloudflare for homie.kiukairor.com).
 
 ---
 
