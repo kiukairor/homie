@@ -128,6 +128,9 @@ homie/
 > See `docs/superpowers/specs/2026-03-29-phase1-design.md` and
 > `docs/superpowers/plans/2026-03-29-phase1-shopping-list.md`.
 >
+> **UI redesigned (2026-03-30):** Tailwind CSS v4 + shadcn-style components, coral theme (#F26B5B),
+> Inter font, bottom nav (List/Checked tabs), card-based AddItemForm, EmptyState with icons.
+>
 > **Fixes shipped (2026-03-30):**
 > - Cross-node networking: kube-router inserted REJECT before Flannel in iptables FORWARD chain.
 >   Fixed by inserting ACCEPT rules for 10.42.0.0/16 and 10.43.0.0/16 at position 1 on both nodes.
