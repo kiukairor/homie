@@ -13,6 +13,6 @@ resources:
 # Pin image tags for prod — updated automatically by CI on each push
 images:
   - name: ghcr.io/kiukairor/homie-backend
-    newTag: latest  # backend
+    newTag: sha-6400a1932d45672980db367386c2f0c4b3bd9ce9  # backend
   - name: ghcr.io/kiukairor/homie-frontend
-    newTag: latest  # frontend
+    newTag: sha-6400a1932d45672980db367386c2f0c4b3bd9ce9  # frontend
