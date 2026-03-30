@@ -1,58 +1,76 @@
-import { useState } from "react";
+// frontend/src/components/AddItemForm.jsx
+import { useState } from 'react'
+import { Plus } from 'lucide-react'
+import { Card, CardContent } from './ui/card'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
-const CATEGORIES = ["produce", "dairy", "meat", "bakery", "frozen", "drinks", "other"];
+const CATEGORIES = ['produce', 'dairy', 'meat', 'bakery', 'frozen', 'drinks', 'other']
 
-export default function AddItemForm({ onAdd }) {
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("1");
-  const [unit, setUnit] = useState("");
-  const [category, setCategory] = useState("");
+export function AddItemForm({ onAdd }) {
+  const [name, setName] = useState('')
+  const [quantity, setQuantity] = useState('')
+  const [unit, setUnit] = useState('')
+  const [category, setCategory] = useState('other')
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!name.trim()) return;
-    await onAdd({ name: name.trim(), quantity, unit: unit || undefined, category: category || undefined });
-    setName("");
-    setQuantity("1");
-    setUnit("");
-    setCategory("");
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!name.trim()) return
+    onAdd({
+      name: name.trim(),
+      quantity: quantity || undefined,
+      unit: unit || undefined,
+      category,
+    })
+    setName('')
+    setQuantity('')
+    setUnit('')
+    setCategory('other')
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Item name"
-        required
-        style={{ flex: "2 1 140px", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc" }}
-      />
-      <input
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-        placeholder="Qty"
-        style={{ flex: "0 1 60px", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc" }}
-      />
-      <input
-        value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-        placeholder="Unit"
-        style={{ flex: "0 1 60px", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc" }}
-      />
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        style={{ flex: "1 1 100px", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc" }}
-      >
-        <option value="">Category</option>
-        {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-      </select>
-      <button
-        type="submit"
-        style={{ flex: "0 0 auto", padding: "8px 20px", background: "#1a73e8", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-      >
-        Add
-      </button>
-    </form>
-  );
+    <div className="fixed bottom-16 inset-x-0 z-10 px-3 pb-2 max-w-lg mx-auto left-0 right-0">
+      <Card className="shadow-lg border-stone-200">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Add an item…"
+              autoComplete="off"
+              required
+            />
+            <div className="flex gap-2">
+              <Input
+                className="w-16 shrink-0"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder="Qty"
+              />
+              <Input
+                className="w-20 shrink-0"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+                placeholder="Unit"
+              />
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="flex-1 h-9 rounded-lg border border-stone-200 bg-white px-2 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-coral transition-colors"
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c.charAt(0).toUpperCase() + c.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <Button type="submit" size="icon" className="shrink-0" aria-label="Add item">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }
