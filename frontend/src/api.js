@@ -25,3 +25,9 @@ export const api = {
   deleteChecked: () =>
     request("/items/checked", { method: "DELETE" }),
 };
+
+export const listItems = api.listItems;
+export const createItem = api.createItem;
+export const updateItem = api.updateItem;
+export const deleteItem = api.deleteItem;
+export const deleteChecked = api.deleteChecked;
