@@ -120,12 +120,21 @@ homie/
         └── plans/              # Implementation plans
 ```
 
-> **Phase 1 (backend + frontend) is fully implemented.**
+> **Phase 1 (backend + frontend) is fully implemented and deployed.**
 > Backend: FastAPI CRUD API, SQLAlchemy async, Alembic migrations, 10 tests all passing.
 > Frontend: React 18 PWA (Vite), Nginx, Dockerfile.
 > CI: GitHub Actions builds linux/arm64 images and pushes to ghcr.io on every push to main.
+> Both pods are deployed in the `homie-prod` namespace via ArgoCD GitOps.
 > See `docs/superpowers/specs/2026-03-29-phase1-design.md` and
 > `docs/superpowers/plans/2026-03-29-phase1-shopping-list.md`.
+>
+> **Known deployment issues (as of 2026-03-30):**
+> - TLS cert pending: `kiukairor.com` is behind Cloudflare proxy; Cloudflare redirects the
+>   Let's Encrypt HTTP-01 ACME challenge to HTTPS before it reaches the cluster.
+>   Fix: switch to DNS-01 challenge via Cloudflare API token, or temporarily grey-cloud
+>   the DNS record to let HTTP-01 through.
+> - Backend fix shipped (commit 981adab): added `?ssl=false` to DATABASE_URL so asyncpg
+>   doesn't attempt an SSL handshake with the unencrypted Postgres pod.
 
 ---
 
@@ -180,9 +189,15 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443  # UI access
 kubectl logs -f deploy/backend -n homie-prod
 kubectl logs -f deploy/ollama -n homie-prod
 
+# TLS cert status
+kubectl get certificate,certificaterequest,order,challenge -n homie-prod
+
 # Re-run model pull job
 kubectl delete job ollama-pull-model -n homie-prod
 kubectl apply -f k8s/base/ollama/pull-job.yaml
+
+# Force ArgoCD re-sync
+argocd app sync homie --force
 ```
 
 ---
