@@ -27,7 +27,7 @@ spec:
     - name: homie-gateway
       sectionName: websecure
   hostnames:
-    - kiukairor.com
+    - homie.kiukairor.com
   rules:
     # API — backend
     - matches:
