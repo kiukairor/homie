@@ -5,7 +5,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy into backend/ subdirectory so `backend.xxx` imports resolve
+COPY . ./backend/
 
 ENV DATABASE_URL=""
 ENV REDIS_URL=""

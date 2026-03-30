@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
     subprocess.run(
         [sys.executable, "-m", "alembic", "upgrade", "head"],
         check=True,
-        cwd="/app",
+        cwd="/app/backend",
     )
     yield
 
