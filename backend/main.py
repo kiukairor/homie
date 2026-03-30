@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 import subprocess
 import sys
 
@@ -10,10 +11,12 @@ from backend.routers.items import router as items_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Pass PYTHONPATH=/app so alembic's env.py can import `backend.*`
     subprocess.run(
         [sys.executable, "-m", "alembic", "upgrade", "head"],
         check=True,
         cwd="/app/backend",
+        env={**os.environ, "PYTHONPATH": "/app"},
     )
     yield
 
