@@ -10,9 +10,9 @@ resources:
   - certificate.yaml
   - cluster-issuer.yaml
 
-# Pin image tags for prod — update these on each release
+# Pin image tags for prod — updated automatically by CI on each push
 images:
   - name: ghcr.io/kiukairor/homie-backend
-    newTag: latest
+    newTag: latest  # backend
   - name: ghcr.io/kiukairor/homie-frontend
-    newTag: latest
+    newTag: latest  # frontend

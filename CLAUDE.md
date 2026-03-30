@@ -146,14 +146,12 @@ homie/
 
 ```
 git push → GitHub (kiukairor/homie)
-    → ArgoCD detects change (polls every 3 min)
-    → Applies k8s/overlays/prod via Kustomize
-    → Rollout to homie-prod namespace
+    → CI builds linux/arm64 images, pushes :latest + :sha-<sha> to ghcr.io
+    → CI update-manifests job updates kustomization.yaml newTag to sha-<sha>, commits [skip ci]
+    → ArgoCD detects manifest change (polls every 3 min)
+    → Applies k8s/overlays/prod via Kustomize → Rollout to homie-prod namespace
 
-# NOTE: images use :latest tag — ArgoCD won't restart pods on new image push alone.
-# After CI builds a new image, force a restart manually:
-#   kubectl rollout restart deployment/frontend -n homie-prod
-#   kubectl rollout restart deployment/backend -n homie-prod
+# paths-ignore: k8s/** prevents the manifest-update commit from re-triggering CI
 ```
 
 Secrets are NOT stored in Git. Create once on the cluster:
