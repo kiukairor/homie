@@ -42,19 +42,44 @@ All services communicate over cluster DNS — no external IPs needed internally.
 ```
 homie/
 ├── CLAUDE.md
+├── README.md
+├── .github/
+│   └── workflows/
+│       └── build.yml           # build + push ARM64 images to ghcr.io
 ├── backend/
 │   ├── Dockerfile
 │   ├── requirements.txt
-│   ├── main.py
-│   ├── routers/
-│   ├── agents/
-│   │   ├── list_agent.py       # Ollama-first, Claude fallback
-│   │   └── tools.py            # MCP-style tool definitions
+│   ├── main.py                 # app factory, CORS, lifespan (runs Alembic)
+│   ├── db/
+│   │   └── session.py          # async engine + SessionLocal + get_session
 │   ├── models/
-│   └── db/
+│   │   └── item.py             # SQLAlchemy Item ORM model
+│   ├── routers/
+│   │   └── items.py            # /api/items CRUD + Pydantic schemas
+│   ├── alembic.ini
+│   ├── alembic/
+│   │   └── versions/
+│   │       └── 0001_create_items_table.py
+│   └── tests/
+│       ├── conftest.py         # test app + async client fixture (SQLite)
+│       ├── test_health.py
+│       └── test_items.py
 ├── frontend/
 │   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── index.html
+│   ├── public/
+│   │   └── manifest.json
 │   └── src/
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── api.js
+│       └── components/
+│           ├── AddItemForm.jsx
+│           ├── ItemList.jsx
+│           └── ItemRow.jsx
 ├── k8s/
 │   ├── base/
 │   │   ├── kustomization.yaml
@@ -67,15 +92,40 @@ homie/
 │   └── overlays/
 │       └── prod/
 │           ├── kustomization.yaml
-│           ├── ingress.yaml
-│           └── cluster-issuer.yaml
+│           ├── gateway.yaml        # GatewayClass + Gateway (Traefik v3)
+│           ├── httproute.yaml      # HTTP→HTTPS redirect + main HTTPS routes
+│           ├── certificate.yaml    # cert-manager Certificate resource
+│           └── cluster-issuer.yaml # Let's Encrypt ClusterIssuer
 ├── argocd/
 │   └── application.yaml
-└── scripts/
-    ├── setup-vm-app.sh         # k3s server + ArgoCD bootstrap
-    ├── setup-vm-ai.sh          # k3s agent join
-    └── anti-idle.sh            # Cron: keep Oracle VMs above idle threshold
+├── terraform/
+│   ├── README.md
+│   ├── main.tf                 # VMs, VCN, subnets, security lists
+│   ├── variables.tf / outputs.tf / backend.conf
+│   ├── terraform.tfvars.example
+│   ├── modules/
+│   │   ├── compute/            # OCI ARM instances
+│   │   ├── network/            # VCN, subnets, security lists
+│   │   └── storage/            # OCI Object Storage for Terraform state
+│   └── cloud-init/
+│       ├── homie-app.yaml.tpl  # k3s server + ArgoCD bootstrap
+│       └── homie-ai.yaml.tpl   # k3s agent join
+├── scripts/
+│   ├── setup-vm-app.sh         # k3s server + Traefik v3 + ArgoCD bootstrap
+│   ├── setup-vm-ai.sh          # k3s agent join
+│   └── anti-idle.sh            # Cron: keep Oracle VMs above idle threshold
+└── docs/
+    └── superpowers/
+        ├── specs/              # Phase design documents
+        └── plans/              # Implementation plans
 ```
+
+> **Phase 1 (backend + frontend) is fully implemented.**
+> Backend: FastAPI CRUD API, SQLAlchemy async, Alembic migrations, 10 tests all passing.
+> Frontend: React 18 PWA (Vite), Nginx, Dockerfile.
+> CI: GitHub Actions builds linux/arm64 images and pushes to ghcr.io on every push to main.
+> See `docs/superpowers/specs/2026-03-29-phase1-design.md` and
+> `docs/superpowers/plans/2026-03-29-phase1-shopping-list.md`.
 
 ---
 
@@ -103,7 +153,7 @@ kubectl create secret generic homie-secrets \
 ## Cluster Bootstrap Order
 
 ```
-1. setup-vm-app.sh   → k3s server, ingress-nginx, cert-manager, ArgoCD
+1. setup-vm-app.sh   → k3s server, Traefik v3 (Gateway API), cert-manager, ArgoCD
 2. setup-vm-ai.sh    → k3s agent joins cluster, labelled workload=ollama
 3. kubectl get nodes → verify both Ready
 4. Create homie-secrets

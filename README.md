@@ -8,7 +8,7 @@ Deployed on Oracle Cloud free tier via a 2-node k3s cluster + ArgoCD GitOps.
 | Phase | Description | Status |
 |-------|-------------|--------|
 | Phase 0 | Infrastructure (k3s cluster, Terraform, GitOps) | Done |
-| Phase 1 | Shopping list CRUD API + React PWA | Planned |
+| Phase 1 | Shopping list CRUD API + React PWA | Done |
 | Phase 2 | AI agent (Ollama / Claude) | Planned |
 | Phase 3 | Telegram / WhatsApp bot | Planned |
 
