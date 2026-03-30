@@ -19,6 +19,13 @@ spec:
           ports:
             - containerPort: 8000
           env:
+            # POSTGRES_PASSWORD must be defined before DATABASE_URL
+            # so that Kubernetes $(VAR) substitution resolves correctly
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: homie-secrets
+                  key: postgres-password
             - name: DATABASE_URL
               value: postgresql+asyncpg://homie:$(POSTGRES_PASSWORD)@postgres:5432/homie
             - name: REDIS_URL
@@ -27,11 +34,6 @@ spec:
               value: http://ollama:11434
             - name: OLLAMA_MODEL
               value: mistral:7b
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: homie-secrets
-                  key: postgres-password
             - name: ANTHROPIC_API_KEY
               valueFrom:
                 secretKeyRef:
