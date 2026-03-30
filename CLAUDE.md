@@ -122,7 +122,7 @@ homie/
 
 > **Phase 1 (backend + frontend) is fully implemented and deployed. App is live at https://homie.kiukairor.com**
 > Backend: FastAPI CRUD API, SQLAlchemy async, Alembic migrations, 10 tests all passing.
-> Frontend: React 18 PWA (Vite), Nginx, Dockerfile.
+> Frontend: React 18 PWA (Vite + Tailwind v4), shadcn-style components, coral theme, bottom nav, Nginx, Dockerfile.
 > CI: GitHub Actions builds linux/arm64 images and pushes to ghcr.io on every push to main.
 > Both pods are deployed in the `homie-prod` namespace via ArgoCD GitOps.
 > See `docs/superpowers/specs/2026-03-29-phase1-design.md` and
@@ -149,6 +149,11 @@ git push → GitHub (kiukairor/homie)
     → ArgoCD detects change (polls every 3 min)
     → Applies k8s/overlays/prod via Kustomize
     → Rollout to homie-prod namespace
+
+# NOTE: images use :latest tag — ArgoCD won't restart pods on new image push alone.
+# After CI builds a new image, force a restart manually:
+#   kubectl rollout restart deployment/frontend -n homie-prod
+#   kubectl rollout restart deployment/backend -n homie-prod
 ```
 
 Secrets are NOT stored in Git. Create once on the cluster:
